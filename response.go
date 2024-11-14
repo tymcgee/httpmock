@@ -525,7 +525,7 @@ func NewNotFoundResponder(fn func(...any)) Responder {
 //	httpmock.NewStringResponse(200, httpmock.File("body.txt").String())
 func NewStringResponse(status int, body string) *http.Response {
 	return &http.Response{
-		Status:        strconv.Itoa(status),
+		Status:        fmt.Sprintf("%03d %s", status, http.StatusText(status)),
 		StatusCode:    status,
 		Body:          NewRespBodyFromString(body),
 		Header:        http.Header{},
@@ -551,7 +551,7 @@ func NewStringResponder(status int, body string) Responder {
 //	httpmock.NewBytesResponse(200, httpmock.File("body.raw").Bytes())
 func NewBytesResponse(status int, body []byte) *http.Response {
 	return &http.Response{
-		Status:        strconv.Itoa(status),
+		Status:        fmt.Sprintf("%03d %s", status, http.StatusText(status)),
 		StatusCode:    status,
 		Body:          NewRespBodyFromBytes(body),
 		Header:        http.Header{},

@@ -712,7 +712,7 @@ func TestResponder_HeaderAddSet(t *testing.T) {
 
 	orig := httpmock.NewStringResponder(200, "body")
 	origNilHeader := httpmock.ResponderFromResponse(&http.Response{
-		Status:        "200",
+		Status:        "200 OK",
 		StatusCode:    200,
 		Body:          httpmock.NewRespBodyFromString("body"),
 		ContentLength: -1,
