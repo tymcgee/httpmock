@@ -214,12 +214,17 @@ var _ = Describe("Articles", func() {
 import (
   // ...
   "github.com/jarcoal/httpmock"
-  "github.com/go-resty/resty"
+  "github.com/go-resty/resty/v2"
 )
 // ...
+
+// global client (using resty.New() creates a new transport each time,
+// so you need to use the same one here and when making the request)
+var client = resty.New()
+
 var _ = BeforeSuite(func() {
   // block all HTTP requests
-  httpmock.ActivateNonDefault(resty.DefaultClient.GetClient())
+  httpmock.ActivateNonDefault(client.GetClient())
 })
 
 var _ = BeforeEach(func() {
@@ -237,18 +242,26 @@ var _ = AfterSuite(func() {
 import (
   // ...
   "github.com/jarcoal/httpmock"
-  "github.com/go-resty/resty"
 )
+
+type Article struct {
+	Status struct {
+		Message string `json:"message"`
+		Code    int    `json:"code"`
+	} `json:"status"`
+}
 
 var _ = Describe("Articles", func() {
   It("returns a list of articles", func() {
     fixture := `{"status":{"message": "Your message", "code": 200}}`
-    responder := httpmock.NewStringResponder(200, fixture)
+    // have to use JsonResponder to get a content-type header application/json
+    // alternately, create a go object instead of using json.RawMessage
+    responder, _ := httpmock.NewJsonResponder(200, json.RawMessage(`{"status":{"message": "Your message", "code": 200}}`)
     fakeUrl := "https://api.mybiz.com/articles.json"
     httpmock.RegisterResponder("GET", fakeUrl, responder)
 
     // fetch the article into struct
-    articleObject := &models.Article{}
+    articleObject := &Article{}
     _, err := resty.R().SetResult(articleObject).Get(fakeUrl)
 
     // do stuff with the article object ...
