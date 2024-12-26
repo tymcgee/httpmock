@@ -254,7 +254,7 @@ type Article struct {
 var _ = Describe("Articles", func() {
   It("returns a list of articles", func() {
     fixture := `{"status":{"message": "Your message", "code": 200}}`
-    // have to use JsonResponder to get a content-type header application/json
+    // have to use NewJsonResponder to get an application/json content-type
     // alternatively, create a go object instead of using json.RawMessage
     responder, _ := httpmock.NewJsonResponder(200, json.RawMessage(`{"status":{"message": "Your message", "code": 200}}`)
     fakeUrl := "https://api.mybiz.com/articles.json"
